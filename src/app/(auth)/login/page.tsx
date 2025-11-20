@@ -3,17 +3,17 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import "./register.css"; // นำเข้าไฟล์ CSS ที่เราเขียนเอง
+import "./login.css";
 
-export default function RegisterPage() {
+export default function LoginPage() {
   const router = useRouter();
   
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     password: "",
-    confirmPassword: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -26,32 +26,33 @@ export default function RegisterPage() {
     setError("");
     setLoading(true);
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("รหัสผ่านไม่ตรงกัน");
-      setLoading(false);
-      return;
-    }
-
     try {
-      const res = await fetch("/api/auth/register", {
+      const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: formData.name,
           email: formData.email,
           password: formData.password,
-          role: "tenant",
         }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "สมัครสมาชิกไม่สำเร็จ");
+        throw new Error(data.message || "เข้าสู่ระบบไม่สำเร็จ");
       }
 
-      alert("สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ");
-      router.push("/login");
+      // บันทึก token (ถ้ามี)
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+
+      if (rememberMe) {
+        localStorage.setItem("rememberedEmail", formData.email);
+      }
+
+      alert("เข้าสู่ระบบสำเร็จ!");
+      router.push("/dashboard");
 
     } catch (err: any) {
       setError(err.message);
@@ -61,11 +62,11 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="register-container">
-      <div className="register-card">
+    <div className="login-container">
+      <div className="login-card">
         
-        <div className="register-header">
-          <h1>สมัครสมาชิก</h1>
+        <div className="login-header">
+          <h1>เข้าสู่ระบบ</h1>
           <p>ระบบจัดการหอพักออนไลน์</p>
         </div>
 
@@ -73,24 +74,13 @@ export default function RegisterPage() {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>ชื่อ-นามสกุล</label>
-            <input
-              type="text"
-              name="name"
-              className="form-input"
-              placeholder="สมชาย ใจดี"
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
             <label>อีเมล</label>
             <input
               type="email"
               name="email"
               className="form-input"
               placeholder="name@example.com"
+              value={formData.email}
               onChange={handleChange}
               required
             />
@@ -98,35 +88,61 @@ export default function RegisterPage() {
 
           <div className="form-group">
             <label>รหัสผ่าน</label>
-            <input
-              type="password"
-              name="password"
-              className="form-input"
-              placeholder="******"
-              onChange={handleChange}
-              required
-            />
+            <div className="password-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                className="form-input"
+                placeholder="******"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "👁️" : "👁️‍🗨️"}
+              </button>
+            </div>
           </div>
 
-          <div className="form-group">
-            <label>ยืนยันรหัสผ่าน</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              className="form-input"
-              placeholder="******"
-              onChange={handleChange}
-              required
-            />
+          <div className="remember-forgot">
+            <label>
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+              จำไว้ในเครื่องนี้
+            </label>
+            <Link href="/forgot-password">ลืมรหัสผ่าน?</Link>
           </div>
 
           <button type="submit" className="btn-submit" disabled={loading}>
-            {loading ? "กำลังบันทึก..." : "สมัครสมาชิก"}
+            {loading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
           </button>
         </form>
 
-        <div className="login-link">
-          มีบัญชีอยู่แล้ว? <Link href="/login">เข้าสู่ระบบ</Link>
+        <div className="divider">
+          <span>หรือ</span>
+        </div>
+
+        <div className="social-buttons">
+          <button type="button" className="social-btn" title="Google">
+            🔵
+          </button>
+          <button type="button" className="social-btn" title="Facebook">
+            👤
+          </button>
+          <button type="button" className="social-btn" title="Line">
+            💬
+          </button>
+        </div>
+
+        <div className="signup-link">
+          ยังไม่มีบัญชี? <Link href="/register">สมัครสมาชิก</Link>
         </div>
       </div>
     </div>
