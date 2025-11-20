@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "bcryptjs": "^3.0.3",
     "lucide-react": "^0.554.0",
     "mongoose": "^8.20.0",
