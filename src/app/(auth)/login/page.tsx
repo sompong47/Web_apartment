@@ -52,7 +52,7 @@ export default function LoginPage() {
       }
 
       alert("เข้าสู่ระบบสำเร็จ!");
-      router.push("/dashboard");
+      router.push("/");
 
     } catch (err: any) {
       setError(err.message);
