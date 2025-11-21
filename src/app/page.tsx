@@ -30,9 +30,9 @@ export default function DormHomepage() {
     { icon: LogIn, label: 'เข้าสู่ระบบ', href: '/login' },
     { icon: UserPlus, label: 'สมัครสมาชิก', href: '/register' },
     { icon: User, label: 'โปรไฟล์', href: '/dashboard/tenant/profile/' },
-    { icon: CreditCard, label: 'การชำระเงิน', href: '/payment' },
-    { icon: FileText, label: 'ค่าน้ำค่าไฟ', href: '/utilities' },
-    { icon: Wrench, label: 'แจ้งซ่อม', href: '/maintenance' }
+    { icon: CreditCard, label: 'การชำระเงิน', href: '/dashboard/tenant/payment' },
+    { icon: FileText, label: 'ค่าน้ำค่าไฟ', href: '/dashboard/tenant/utilities' },
+    { icon: Wrench, label: 'แจ้งซ่อม', href: '/dashboard/tenant/maintenance' }
   ];
 
   const stats = [
