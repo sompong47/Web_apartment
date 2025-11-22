@@ -1,0 +1,1244 @@
+/* dashboard.module.css */
+
+.page {
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #0f172a, #0a3b57, #0f172a);
+}
+
+/* Navigation */
+.navbar {
+  background-color: rgba(30, 41, 59, 0.9);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #334155;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.navContainer {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.navContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 4rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logoIcon {
+  width: 2rem;
+  height: 2rem;
+  color: #22d3ee;
+}
+
+.logoText {
+  font-size: 1.5rem;
+  font-weight: bold;
+  background: linear-gradient(to right, #38bdf8, #5eead4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.desktopNav {
+  display: none;
+  align-items: center;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .desktopNav {
+    display: flex;
+  }
+}
+
+.navButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.navButton.active {
+  background-color: #06b6d4;
+  color: white;
+}
+
+.navButton:not(.active) {
+  color: #cbd5e1;
+  background-color: transparent;
+}
+
+.navButton:not(.active):hover {
+  background-color: #334155;
+}
+
+.navIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.logoutButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  color: #cbd5e1;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.875rem;
+}
+
+.logoutButton:hover {
+  background-color: #334155;
+}
+
+.mobileMenuButton {
+  display: block;
+  color: white;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .mobileMenuButton {
+    display: none;
+  }
+}
+
+.menuIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.mobileMenu {
+  background-color: #1e293b;
+  border-top: 1px solid #334155;
+}
+
+@media (min-width: 768px) {
+  .mobileMenu {
+    display: none;
+  }
+}
+
+.mobileMenuContent {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mobileNavButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.mobileNavButton.active {
+  background-color: #06b6d4;
+  color: white;
+}
+
+.mobileNavButton:not(.active) {
+  color: #cbd5e1;
+  background-color: transparent;
+}
+
+.mobileNavButton:not(.active):hover {
+  background-color: #334155;
+}
+
+.mobileNavIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Main Content */
+.main {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.welcome {
+  margin-bottom: 2rem;
+}
+
+.welcomeTitle {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.welcomeSubtitle {
+  color: #94a3b8;
+}
+
+/* Room Card */
+.roomCard {
+  background: linear-gradient(to right, #06b6d4, #2563eb);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  color: white;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+  margin-bottom: 1.5rem;
+}
+
+.roomCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.roomCardTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.roomCardIcon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.roomGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .roomGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.roomInfo {
+  /* Empty for now */
+}
+
+.roomInfoLabel {
+  color: #a5f3fc;
+  font-size: 0.875rem;
+}
+
+.roomInfoValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.roomInfoValueLarge {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Alert Card */
+.alertCard {
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 2px solid #ef4444;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.alertContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.alertIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #ef4444;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+.alertInner {
+  flex: 1;
+}
+
+.alertTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #ef4444;
+  margin-bottom: 0.5rem;
+}
+
+.alertText {
+  color: #cbd5e1;
+  margin-bottom: 1rem;
+}
+
+.alertButton {
+  background-color: #ef4444;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.alertButton:hover {
+  background-color: #dc2626;
+}
+
+/* Stats Grid */
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .statsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Card */
+.card {
+  background-color: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid #334155;
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.cardIconWrapper {
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+}
+
+.cardIconPurple {
+  background-color: rgba(168, 85, 247, 0.2);
+}
+
+.cardIconOrange {
+  background-color: rgba(249, 115, 22, 0.2);
+}
+
+.cardIconPink {
+  background-color: rgba(236, 72, 153, 0.2);
+}
+
+.cardIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.iconPurple {
+  color: #c084fc;
+}
+
+.iconOrange {
+  color: #fb923c;
+}
+
+.iconPink {
+  color: #f472b6;
+}
+
+.cardTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: white;
+}
+
+/* Bill Items */
+.billItems {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.billItem {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+}
+
+.billLabel {
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.billValue {
+  color: white;
+}
+
+.billIcon {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.billTotal {
+  border-top: 1px solid #475569;
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.billTotalLabel {
+  color: white;
+  font-weight: 700;
+}
+
+.billTotalValue {
+  color: #22d3ee;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+/* Badge */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  color: white;
+  font-weight: 500;
+}
+
+.badgeYellow {
+  background-color: #eab308;
+}
+
+.badgeGreen {
+  background-color: #22c55e;
+}
+
+.badgeRed {
+  background-color: #ef4444;
+}
+
+.badgeBlue {
+  background-color: #3b82f6;
+}
+
+/* Buttons */
+.button {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.buttonOrange {
+  background-color: #f97316;
+  color: white;
+}
+
+.buttonOrange:hover {
+  background-color: #ea580c;
+}
+
+.buttonCyan {
+  background-color: #06b6d4;
+  color: white;
+  padding: 0.75rem;
+  font-weight: 700;
+}
+
+.buttonCyan:hover {
+  background-color: #0891b2;
+}
+
+/* Maintenance Items */
+.maintenanceItems {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.maintenanceItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.maintenanceInfo {
+  flex: 1;
+}
+
+.maintenanceIssue {
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.maintenanceDate {
+  color: #94a3b8;
+  font-size: 0.75rem;
+}
+
+/* Announcements */
+.announcementItems {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.announcementItem {
+  border-left: 4px solid #ec4899;
+  padding-left: 0.75rem;
+}
+
+.announcementTitle {
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.announcementDate {
+  color: #94a3b8;
+  font-size: 0.75rem;
+}
+
+/* Quick Actions */
+.quickActionsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .quickActionsGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.quickActionButton {
+  background-color: rgba(30, 41, 59, 0.5);
+  border: 1px solid #334155;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.quickActionButton:hover {
+  background-color: rgba(51, 65, 85, 0.5);
+}
+
+.quickActionIcon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.iconCyan {
+  color: #22d3ee;
+}
+
+.iconGreen {
+  color: #4ade80;
+}
+
+.quickActionText {
+  color: white;
+  font-weight: 500;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+/* Payment History */
+.paymentHistory {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.paymentHistoryItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: rgba(51, 65, 85, 0.5);
+  border-radius: 0.5rem;
+}
+
+.paymentInfo {
+  /* Empty for now */
+}
+
+.paymentMonth {
+  color: white;
+  font-weight: 500;
+}
+
+.paymentDate {
+  color: #94a3b8;
+  font-size: 0.875rem;
+}
+
+.paymentAmount {
+  text-align: right;
+}
+
+.paymentAmountValue {
+  color: white;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+/* Section Titles */
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+}
+
+.addButton {
+  background-color: #f97316;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.addButton:hover {
+  background-color: #ea580c;
+}
+
+/* Maintenance Detail Card */
+.maintenanceCard {
+  background-color: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid #334155;
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+
+.maintenanceCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.maintenanceCardInfo {
+  flex: 1;
+}
+
+.maintenanceCardTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: white;
+}
+
+.maintenanceCardDate {
+  color: #94a3b8;
+  font-size: 0.875rem;
+}
+
+.maintenanceActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.linkButton {
+  color: #22d3ee;
+  font-size: 0.875rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.linkButton:hover {
+  text-decoration: underline;
+}
+
+/* Announcement Detail Card */
+.announcementCard {
+  background-color: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid #334155;
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+
+.announcementCardContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.announcementIconWrapper {
+  padding: 0.75rem;
+  background-color: rgba(236, 72, 153, 0.2);
+  border-radius: 0.75rem;
+}
+
+.announcementCardInfo {
+  flex: 1;
+}
+
+.announcementCardTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.25rem;
+}
+
+.announcementCardDate {
+  color: #94a3b8;
+  font-size: 0.875rem;
+}
+
+/* Profile Section */
+.profileCard {
+  background-color: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid #334155;
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+
+.profileItems {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profileItem {
+  /* Empty for now */
+}
+
+.profileLabel {
+  color: #94a3b8;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.profileValue {
+  color: white;
+  font-size: 1.125rem;
+}
+
+/* Bill Detail Card */
+.billCard {
+  background-color: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid #334155;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.billCardTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.billCardItems {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.billCardItem {
+  display: flex;
+  justify-content: space-between;
+}
+
+.billCardLabel {
+  color: #94a3b8;
+}
+
+.billCardValue {
+  color: white;
+}
+
+.billCardTotal {
+  border-top: 1px solid #475569;
+  padding-top: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.billCardTotalLabel {
+  color: white;
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.billCardTotalValue {
+  color: #22d3ee;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.billCardButton {
+  width: 100%;
+  background-color: #06b6d4;
+  color: white;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.billCardButton:hover {
+  background-color: #0891b2;
+}
+
+/* Content Sections */
+.contentSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cardList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Booking Page Styles */
+.roomsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .roomsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .roomsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.roomBookingCard {
+  background-color: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid #334155;
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.roomBookingCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border-color: #06b6d4;
+}
+
+.roomCardImageSection {
+  position: relative;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 3rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.roomImagePlaceholder {
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.roomBadge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #1e293b;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.roomCardContent {
+  padding: 1.5rem;
+}
+
+.roomCardTitleText {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.roomPrice {
+  margin-bottom: 1rem;
+}
+
+.roomPriceAmount {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #22d3ee;
+}
+
+.roomPriceUnit {
+  font-size: 1rem;
+  color: #94a3b8;
+}
+
+.roomDetails {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #334155;
+}
+
+.roomDetail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.roomDetailLabel {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.roomDetailValue {
+  font-size: 0.875rem;
+  color: white;
+  font-weight: 600;
+}
+
+.roomFacilities {
+  margin-bottom: 1.5rem;
+}
+
+.facilitiesTitle {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+}
+
+.facilitiesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.facilityTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background-color: rgba(34, 211, 238, 0.1);
+  color: #22d3ee;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  border: 1px solid rgba(34, 211, 238, 0.3);
+}
+
+.facilityIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.bookButton {
+  width: 100%;
+  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.bookButton:hover {
+  transform: scale(1.02);
+  box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3);
+}
+
+.buttonIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Modal Styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  padding: 1rem;
+}
+
+.modal {
+  background: linear-gradient(to bottom, #1e293b, #0f172a);
+  border: 1px solid #334155;
+  border-radius: 1rem;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #334155;
+}
+
+.modalTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+}
+
+.modalClose {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s;
+}
+
+.modalClose:hover {
+  background-color: rgba(148, 163, 184, 0.1);
+  color: white;
+}
+
+.closeIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.modalBody {
+  padding: 1.5rem;
+}
+
+.selectedRoomSummary {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: rgba(6, 182, 212, 0.1);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.summaryIcon {
+  font-size: 2.5rem;
+}
+
+.summaryTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.25rem;
+}
+
+.summaryPrice {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #22d3ee;
+}
+
+.bookingForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.formInput {
+  background-color: rgba(30, 41, 59, 0.5);
+  border: 1px solid #334155;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  color: white;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+}
+
+.formInput::placeholder {
+  color: #64748b;
+}
+
+.bookingSummary {
+  background-color: rgba(30, 41, 59, 0.5);
+  border: 1px solid #334155;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-top: 0.5rem;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  color: #cbd5e1;
+  font-size: 0.875rem;
+}
+
+.summaryTotal {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 0.75rem;
+  margin-top: 0.75rem;
+  border-top: 1px solid #334155;
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+}
+
+.totalAmount {
+  color: #22d3ee;
+  font-size: 1.5rem;
+}
+
+.modalFooter {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.cancelButton {
+  flex: 1;
+  background-color: transparent;
+  border: 1px solid #334155;
+  color: #cbd5e1;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.cancelButton:hover {
+  background-color: rgba(51, 65, 85, 0.5);
+  color: white;
+}
+
+.confirmButton {
+  flex: 2;
+  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  border: none;
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.confirmButton:hover {
+  transform: scale(1.02);
+  box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3);
+}

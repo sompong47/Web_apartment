@@ -63,8 +63,6 @@ export default function ProfilePage() {
       {/* Header */}
       <div className={styles.header}>
         <div className={styles.headerContent}>
-          <Building2 className={styles.headerIcon} />
-          <h1 className={styles.headerTitle}>โปรไฟล์ของฉัน</h1>
         </div>
       </div>
 
