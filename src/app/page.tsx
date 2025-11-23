@@ -22,17 +22,12 @@ import {
 } from 'lucide-react';
 import styles from './page.module.css';
 
-export default function DormHomepage() {
+export default function SorHomepage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigationItems = [
-    { icon: Home, label: 'หน้าแรก', href: '/' },
     { icon: LogIn, label: 'เข้าสู่ระบบ', href: '/login' },
     { icon: UserPlus, label: 'สมัครสมาชิก', href: '/register' },
-    { icon: User, label: 'โปรไฟล์', href: '/dashboard/tenant/profile/' },
-    { icon: CreditCard, label: 'การชำระเงิน', href: '/dashboard/tenant/payment' },
-    { icon: FileText, label: 'ค่าน้ำค่าไฟ', href: '/dashboard/tenant/utilities' },
-    { icon: Wrench, label: 'แจ้งซ่อม', href: '/dashboard/tenant/maintenance' }
   ];
 
   const stats = [
@@ -50,7 +45,7 @@ export default function DormHomepage() {
           <div className={styles.navContent}>
             <div className={styles.logo}>
               <Building2 className={styles.logoIcon} />
-              <span className={styles.logoText}>DormHub</span>
+              <span className={styles.logoText}>SorHub</span>
             </div>
 
             {/* Desktop Navigation */}
@@ -153,7 +148,7 @@ export default function DormHomepage() {
                 </div>
                 <div>
                   <div className={styles.contactLabel}>อีเมล</div>
-                  <div className={styles.contactValue}>contact@dormhub.com</div>
+                  <div className={styles.contactValue}>contact@sorhub.com</div>
                 </div>
               </div>
             </div>
