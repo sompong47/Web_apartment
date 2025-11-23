@@ -5,13 +5,14 @@ import Link from "next/link";
 import "./rooms.css";
 
 export default function AdminRoomsPage() {
+  // Define Type ให้ตรงกับ Database จริง
   type Room = {
     _id: string;
     roomNumber: string;
     floor: number;
-    type: "single" | "double" | "studio" | string;
+    type: "single" | "double" | "studio"; // หรือ string ถ้ามีแบบอื่น
     price: number;
-    status: "available" | "occupied" | "maintenance" | string;
+    status: "available" | "occupied" | "maintenance";
   };
 
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -22,25 +23,20 @@ export default function AdminRoomsPage() {
   const [filterType, setFilterType] = useState<string>("");
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");
 
-  // ฟังก์ชันดึงข้อมูลห้อง (Mock Data)
+  // 1. ดึงข้อมูลห้องจาก API จริง
   const fetchRooms = async () => {
     try {
-      // Mock data - ในจริงจะเรียก API
-      const mockRooms: Room[] = [
-        { _id: "1", roomNumber: "101", floor: 1, type: "single", price: 5000, status: "available" },
-        { _id: "2", roomNumber: "102", floor: 1, type: "double", price: 8000, status: "occupied" },
-        { _id: "3", roomNumber: "103", floor: 1, type: "studio", price: 6000, status: "available" },
-        { _id: "4", roomNumber: "201", floor: 2, type: "single", price: 5000, status: "occupied" },
-        { _id: "5", roomNumber: "202", floor: 2, type: "double", price: 8000, status: "available" },
-        { _id: "6", roomNumber: "203", floor: 2, type: "studio", price: 6000, status: "maintenance" },
-        { _id: "7", roomNumber: "301", floor: 3, type: "double", price: 9000, status: "occupied" },
-        { _id: "8", roomNumber: "302", floor: 3, type: "studio", price: 7000, status: "available" },
-        { _id: "9", roomNumber: "401", floor: 4, type: "single", price: 5500, status: "occupied" },
-        { _id: "10", roomNumber: "501", floor: 5, type: "double", price: 10000, status: "available" },
-      ];
-      setRooms(mockRooms);
+      const res = await fetch("/api/rooms");
+      const data = await res.json();
+      
+      if (Array.isArray(data)) {
+        setRooms(data);
+      } else {
+        setRooms([]);
+      }
     } catch (error) {
       console.error("Error fetching rooms:", error);
+      setRooms([]);
     } finally {
       setLoading(false);
     }
@@ -50,25 +46,34 @@ export default function AdminRoomsPage() {
     fetchRooms();
   }, []);
 
-  // ฟังก์ชันลบห้อง
+  // 2. ฟังก์ชันลบห้อง (ยิง API DELETE จริง)
   const handleDelete = async (id: string) => {
     if (!confirm("คุณแน่ใจหรือไม่ที่จะลบห้องนี้?")) return;
 
     try {
-      // Mock delete
-      setRooms(rooms.filter((room: Room) => room._id !== id));
-      alert("ลบห้องสำเร็จ");
+      const res = await fetch(`/api/rooms/${id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        alert("ลบห้องสำเร็จ");
+        // อัปเดต State โดยไม่ต้องโหลดใหม่
+        setRooms(rooms.filter((room) => room._id !== id));
+      } else {
+        alert("เกิดข้อผิดพลาดในการลบ");
+      }
     } catch (error) {
       console.error("Error deleting:", error);
-      alert("เกิดข้อผิดพลาดในการลบ");
+      alert("เกิดข้อผิดพลาดในการเชื่อมต่อ");
     }
   };
 
-  // ฟังก์ชันกรองข้อมูล
-  const filteredRooms = rooms.filter((room: Room) => {
+  // 3. ระบบค้นหาและกรอง
+  const filteredRooms = rooms.filter((room) => {
     const matchSearch =
-      room.roomNumber.includes(searchTerm) ||
+      room.roomNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       room.floor.toString().includes(searchTerm);
+      
     const matchFloor = !filterFloor || room.floor.toString() === filterFloor;
     const matchStatus = !filterStatus || room.status === filterStatus;
     const matchType = !filterType || room.type === filterType;
@@ -76,6 +81,7 @@ export default function AdminRoomsPage() {
     return matchSearch && matchFloor && matchStatus && matchType;
   });
 
+  // Helper Functions
   const getTypeLabel = (type: string) => {
     const types: Record<string, string> = {
       single: "เตียงเดี่ยว",
@@ -94,13 +100,14 @@ export default function AdminRoomsPage() {
     return statuses[status] || status;
   };
 
-  const floors = [1, 2, 3, 4, 5];
+  // สร้างตัวเลือกชั้นจากข้อมูลที่มีจริง (หรือจะ Fix 1-5 ก็ได้)
+  const floors = Array.from(new Set(rooms.map(r => r.floor))).sort((a, b) => a - b);
 
   if (loading) {
     return (
       <div className="rooms-container">
-        <div className="loading">
-          <div className="loading-spinner"></div>
+        <div className="loading" style={{textAlign: 'center', padding: '50px', color: '#666'}}>
+          <div className="loading-spinner">🏠</div>
           <p>กำลังโหลดข้อมูลห้องพัก...</p>
         </div>
       </div>
@@ -133,11 +140,9 @@ export default function AdminRoomsPage() {
           onChange={(e) => setFilterFloor(e.target.value)}
         >
           <option value="">ทั้งหมดชั้น</option>
-          {floors.map((floor) => (
-            <option key={floor} value={floor}>
-              ชั้น {floor}
-            </option>
-          ))}
+          {floors.length > 0 ? floors.map((floor) => (
+            <option key={floor} value={floor}>ชั้น {floor}</option>
+          )) : <option value="1">ชั้น 1</option>}
         </select>
 
         <select
@@ -205,7 +210,7 @@ export default function AdminRoomsPage() {
                   </td>
                 </tr>
               ) : (
-                filteredRooms.map((room: Room) => (
+                filteredRooms.map((room) => (
                   <tr key={room._id}>
                     <td>
                       <span className="room-number">#{room.roomNumber}</span>
@@ -265,7 +270,7 @@ export default function AdminRoomsPage() {
               </div>
             </div>
           ) : (
-            filteredRooms.map((room: Room) => (
+            filteredRooms.map((room) => (
               <div key={room._id} className="room-card">
                 <div className="room-card-header">
                   <div className="room-card-number">#{room.roomNumber}</div>

@@ -1,395 +1,167 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import "./utilities.css";
 
-interface Bill {
-  id: string;
-  type: "water" | "electricity";
+interface UtilityRecord {
+  _id: string;
   month: string;
   year: number;
-  usage: number;
-  unit: string;
-  unitPrice: number;
-  amount: number;
-  status: "paid" | "pending" | "overdue";
-  dueDate: string;
-  paidDate?: string;
+  waterUsage: number;
+  electricUsage: number;
+  waterCost: number;
+  electricCost: number;
+  totalCost: number;
+  roomId: string;
 }
 
-const mockBills: Bill[] = [
-  {
-    id: "BILL001",
-    type: "water",
-    month: "พฤศจิกายน",
-    year: 2025,
-    usage: 25,
-    unit: "ลบ.ม.",
-    unitPrice: 12,
-    amount: 300,
-    status: "pending",
-    dueDate: "2025-12-05",
-  },
-  {
-    id: "BILL002",
-    type: "electricity",
-    month: "พฤศจิกายน",
-    year: 2025,
-    usage: 180,
-    unit: "kWh",
-    unitPrice: 5.5,
-    amount: 990,
-    status: "pending",
-    dueDate: "2025-12-05",
-  },
-  {
-    id: "BILL003",
-    type: "water",
-    month: "ตุลาคม",
-    year: 2025,
-    usage: 20,
-    unit: "ลบ.ม.",
-    unitPrice: 12,
-    amount: 240,
-    status: "paid",
-    dueDate: "2025-11-05",
-    paidDate: "2025-11-03",
-  },
-  {
-    id: "BILL004",
-    type: "electricity",
-    month: "ตุลาคม",
-    year: 2025,
-    usage: 160,
-    unit: "kWh",
-    unitPrice: 5.5,
-    amount: 880,
-    status: "paid",
-    dueDate: "2025-11-05",
-    paidDate: "2025-11-02",
-  },
-  {
-    id: "BILL005",
-    type: "water",
-    month: "กันยายน",
-    year: 2025,
-    usage: 22,
-    unit: "ลบ.ม.",
-    unitPrice: 12,
-    amount: 264,
-    status: "overdue",
-    dueDate: "2025-10-05",
-    paidDate: undefined,
-  },
-];
+export default function TenantUtilitiesPage() {
+  const router = useRouter();
+  const [records, setRecords] = useState<UtilityRecord[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default function UtilitiesPage() {
-  const [activeTab, setActiveTab] = useState("all");
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
-  const [searchMonth, setSearchMonth] = useState("");
-  const [bills, setBills] = useState<Bill[]>(mockBills);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // 1. ตรวจสอบ User
+        const userStr = localStorage.getItem("currentUser");
+        if (!userStr) {
+            router.push("/login");
+            return;
+        }
+        const currentUser = JSON.parse(userStr);
 
-  const filteredBills = bills.filter((bill) => {
-    if (activeTab === "all") return true;
-    if (activeTab === "water") return bill.type === "water";
-    if (activeTab === "electricity") return bill.type === "electricity";
-    if (activeTab === "pending") return bill.status === "pending";
-    if (activeTab === "paid") return bill.status === "paid";
-    return true;
-  });
+        // 2. ดึง Tenant เพื่อหา RoomID ของ User นี้
+        const resTenant = await fetch("/api/tenants");
+        const tenants = await resTenant.json();
+        
+        let myRoomId = "";
+        if (Array.isArray(tenants)) {
+            const myTenant = tenants.find((t: any) => 
+                (t.userId?._id === currentUser.id || t.userId === currentUser.id) && 
+                t.status === 'active'
+            );
+            
+            if (myTenant) {
+                myRoomId = myTenant.roomId?._id || myTenant.roomId;
+            }
+        }
 
-  const waterBills = bills.filter((b) => b.type === "water");
-  const electricityBills = bills.filter((b) => b.type === "electricity");
-  const pendingBills = bills.filter((b) => b.status === "pending");
-  const totalPending = pendingBills.reduce((sum, b) => sum + b.amount, 0);
+        if (!myRoomId) {
+            setLoading(false);
+            return; 
+        }
 
-  const handlePaymentClick = (bill: Bill) => {
-    if (bill.status !== "paid") {
-      setSelectedBill(bill);
-      setShowPaymentModal(true);
-    }
-  };
+        // 3. ดึง Utilities ทั้งหมด
+        const resUtil = await fetch("/api/utilities"); 
+        const data = await resUtil.json();
 
-  const handlePayment = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (selectedBill) {
-      setBills(
-        bills.map((bill) =>
-          bill.id === selectedBill.id
-            ? {
-                ...bill,
-                status: "paid" as const,
-                paidDate: new Date().toISOString().split("T")[0],
-              }
-            : bill
-        )
-      );
-      setShowPaymentModal(false);
-      setSelectedBill(null);
-      alert("ชำระเงินสำเร็จ!");
-    }
-  };
+        if (Array.isArray(data)) {
+            const myUtilities = data.filter((u: any) => 
+                (u.roomId?._id === myRoomId || u.roomId === myRoomId)
+            );
 
-  const getLatestWaterBill = () =>
-    waterBills.sort(
-      (a, b) =>
-        new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime()
-    )[0];
-  const getLatestElectricityBill = () =>
-    electricityBills.sort(
-      (a, b) =>
-        new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime()
-    )[0];
+            // แปลงข้อมูล
+            const formatted = myUtilities.map((u: any) => ({
+                _id: u._id,
+                month: u.month,
+                year: u.year,
+                waterUsage: u.waterUsage,
+                electricUsage: u.electricUsage,
+                waterCost: u.waterUsage * u.waterRate,
+                electricCost: u.electricUsage * u.electricRate,
+                totalCost: (u.waterUsage * u.waterRate) + (u.electricUsage * u.electricRate),
+                roomId: myRoomId // ✅ เพิ่มบรรทัดนี้ครับ (ใส่ roomId ให้มัน)
+            }));
+            
+            // เรียงลำดับข้อมูล: ใหม่ -> เก่า
+            formatted.sort((a: any, b: any) => {
+                const yearDiff = b.year - a.year;
+                if (yearDiff !== 0) return yearDiff;
+
+                const getMonthNum = (m: string) => parseInt(m.split('-')[0]);
+                return getMonthNum(b.month) - getMonthNum(a.month);
+            });
+
+            setRecords(formatted);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [router]);
+
+  if (loading) return <div style={{padding:'50px', textAlign:'center'}}>กำลังโหลดข้อมูล...</div>;
+
+  const latest = records.length > 0 ? records[0] : null;
 
   return (
     <div className="utilities-container">
-      <div className="utilities-header">
-        <h1>💰 จ่ายค่าน้ำ ค่าไฟฟ้า</h1>
-        <p>จัดการและชำระค่าสาธารณูปโภค</p>
-      </div>
+      <h1 className="page-title">💧⚡ ประวัติการใช้น้ำ-ไฟ</h1>
+      <p style={{color:'#666', marginBottom:'25px'}}>ตรวจสอบปริมาณการใช้งานรายเดือน (ค่าใช้จ่ายนี้รวมในบิลค่าเช่าแล้ว)</p>
 
-      {/* Summary Cards */}
-      <div className="summary-grid">
-        {getLatestWaterBill() && (
-          <div className="summary-card water">
-            <div className="card-icon">💧</div>
-            <div className="card-title">ค่าน้ำ</div>
-            <div className="card-amount">
-              ฿{getLatestWaterBill()?.amount.toLocaleString()}
+      {/* Stats Cards */}
+      {latest ? (
+          <div className="stats-grid">
+            <div className="stat-card water">
+                <div className="icon">💧</div>
+                <div>
+                    <div className="label">ใช้น้ำล่าสุด ({latest.month})</div>
+                    <div className="value">{latest.waterUsage} หน่วย</div>
+                    <div className="sub-value">คิดเป็นเงิน ฿{latest.waterCost.toLocaleString()}</div>
+                </div>
             </div>
-            <div className="card-unit">
-              {getLatestWaterBill()?.usage} {getLatestWaterBill()?.unit}
+            <div className="stat-card electric">
+                <div className="icon">⚡</div>
+                <div>
+                    <div className="label">ใช้ไฟล่าสุด ({latest.month})</div>
+                    <div className="value">{latest.electricUsage} หน่วย</div>
+                    <div className="sub-value">คิดเป็นเงิน ฿{latest.electricCost.toLocaleString()}</div>
+                </div>
             </div>
-            <span
-              className={`card-status status-${getLatestWaterBill()?.status}`}
-            >
-              {getLatestWaterBill()?.status === "paid"
-                ? "ชำระแล้ว"
-                : getLatestWaterBill()?.status === "pending"
-                ? "ยังไม่ชำระ"
-                : "เกินกำหนด"}
-            </span>
           </div>
-        )}
-
-        {getLatestElectricityBill() && (
-          <div className="summary-card electricity">
-            <div className="card-icon">⚡</div>
-            <div className="card-title">ค่าไฟฟ้า</div>
-            <div className="card-amount">
-              ฿{getLatestElectricityBill()?.amount.toLocaleString()}
-            </div>
-            <div className="card-unit">
-              {getLatestElectricityBill()?.usage} {getLatestElectricityBill()?.unit}
-            </div>
-            <span
-              className={`card-status status-${getLatestElectricityBill()?.status}`}
-            >
-              {getLatestElectricityBill()?.status === "paid"
-                ? "ชำระแล้ว"
-                : getLatestElectricityBill()?.status === "pending"
-                ? "ยังไม่ชำระ"
-                : "เกินกำหนด"}
-            </span>
+      ) : (
+          <div className="stats-grid">
+             <div className="stat-card" style={{gridColumn: '1 / -1', textAlign:'center', display:'block'}}>
+                 <h3 style={{margin:0, color:'#999'}}>ยังไม่มีประวัติการใช้งาน</h3>
+             </div>
           </div>
-        )}
+      )}
 
-        <div className="summary-card">
-          <div className="card-icon">📋</div>
-          <div className="card-title">ยอดค้างชำระ</div>
-          <div className="card-amount">
-            ฿{totalPending.toLocaleString()}
-          </div>
-          <div className="card-unit">{pendingBills.length} รายการ</div>
-          <span className="card-status status-pending">รอการชำระ</span>
-        </div>
-      </div>
-
-      <div className="utilities-content">
-        {/* Tabs */}
-        <div className="utilities-tabs">
-          <button
-            className={`tab-btn ${activeTab === "all" ? "active" : ""}`}
-            onClick={() => setActiveTab("all")}
-          >
-            📋 ทั้งหมด
-          </button>
-          <button
-            className={`tab-btn ${activeTab === "water" ? "active" : ""}`}
-            onClick={() => setActiveTab("water")}
-          >
-            💧 ค่าน้ำ
-          </button>
-          <button
-            className={`tab-btn ${activeTab === "electricity" ? "active" : ""}`}
-            onClick={() => setActiveTab("electricity")}
-          >
-            ⚡ ค่าไฟ
-          </button>
-          <button
-            className={`tab-btn ${activeTab === "pending" ? "active" : ""}`}
-            onClick={() => setActiveTab("pending")}
-          >
-            ⏳ ยังไม่ชำระ
-          </button>
-          <button
-            className={`tab-btn ${activeTab === "paid" ? "active" : ""}`}
-            onClick={() => setActiveTab("paid")}
-          >
-            ✅ ชำระแล้ว
-          </button>
-        </div>
-
-        {/* Bills Section */}
-        <div className="bills-section">
-          <h2 className="section-title">📄 ประวัติค่าสาธารณูปโภค</h2>
-
-          {filteredBills.length > 0 ? (
-            <div style={{ overflowX: "auto" }}>
-              <table className="bills-table">
-                <thead>
-                  <tr>
-                    <th>ประเภท</th>
+      {/* Table History */}
+      <div className="table-wrapper">
+        <table className="utility-table">
+            <thead>
+                <tr>
                     <th>เดือน/ปี</th>
-                    <th>การใช้งาน</th>
-                    <th>หน่วยละ (บาท)</th>
-                    <th>จำนวนเงิน</th>
-                    <th>สถานะ</th>
-                    <th>วันที่ครบกำหนด</th>
-                    <th>การกระทำ</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredBills.map((bill) => (
-                    <tr key={bill.id}>
-                      <td>
-                        <span className="bill-type" style={{
-                          paddingLeft: "0"
-                        }}>
-                          {bill.type === "water" ? "ค่าน้ำ" : "ค่าไฟฟ้า"}
-                        </span>
-                      </td>
-                      <td>
-                        {bill.month} {bill.year}
-                      </td>
-                      <td>
-                        {bill.usage} {bill.unit}
-                      </td>
-                      <td>฿{bill.unitPrice}</td>
-                      <td className="amount-due">
-                        ฿{bill.amount.toLocaleString()}
-                      </td>
-                      <td>
-                        <span className={`status-badge ${bill.status}`}>
-                          {bill.status === "paid"
-                            ? "ชำระแล้ว"
-                            : bill.status === "pending"
-                            ? "ยังไม่ชำระ"
-                            : "เกินกำหนด"}
-                        </span>
-                      </td>
-                      <td>{bill.dueDate}</td>
-                      <td>
-                        <button
-                          className="action-btn"
-                          onClick={() => handlePaymentClick(bill)}
-                          disabled={bill.status === "paid"}
-                        >
-                          {bill.status === "paid" ? "ชำระแล้ว" : "ชำระเงิน"}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="empty-state">
-              <div className="empty-icon">📭</div>
-              <h3>ไม่มีข้อมูล</h3>
-              <p>ไม่พบรายการตามการค้นหา</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Payment Modal */}
-      <div className={`modal ${showPaymentModal ? "active" : ""}`}>
-        <div className="modal-content">
-          <div className="modal-header">
-            {selectedBill?.type === "water" ? "💧" : "⚡"} ชำระค่า
-            {selectedBill?.type === "water" ? "น้ำ" : "ไฟฟ้า"}
-          </div>
-
-          <div className="payment-details">
-            <div className="detail-row">
-              <span>เดือน:</span>
-              <strong>
-                {selectedBill?.month} {selectedBill?.year}
-              </strong>
-            </div>
-            <div className="detail-row">
-              <span>การใช้งาน:</span>
-              <strong>
-                {selectedBill?.usage} {selectedBill?.unit}
-              </strong>
-            </div>
-            <div className="detail-row">
-              <span>หน่วยละ:</span>
-              <strong>฿{selectedBill?.unitPrice}</strong>
-            </div>
-            <div className="detail-row">
-              <span>จำนวนเงินทั้งสิ้น:</span>
-              <strong style={{ color: "#667eea", fontSize: "18px" }}>
-                ฿{selectedBill?.amount.toLocaleString()}
-              </strong>
-            </div>
-          </div>
-
-          <form onSubmit={handlePayment}>
-            <div className="form-group">
-              <label>วิธีการชำระเงิน</label>
-              <select required defaultValue="">
-                <option value="">-- เลือกวิธีการชำระเงิน --</option>
-                <option value="bank-transfer">โอนธนาคาร</option>
-                <option value="credit-card">บัตรเครดิต</option>
-                <option value="debit-card">บัตรเดบิต</option>
-                <option value="qr-code">QR Code</option>
-                <option value="cash">เงินสด</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>เลขที่การอ้างอิง (ถ้ามี)</label>
-              <input
-                type="text"
-                placeholder="กรอกเลขที่การอ้างอิง..."
-              />
-            </div>
-
-            <div className="form-group">
-              <label>หมายเหตุ</label>
-              <input
-                type="text"
-                placeholder="เพิ่มหมายเหตุ (ไม่บังคับ)..."
-              />
-            </div>
-
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn-cancel"
-                onClick={() => setShowPaymentModal(false)}
-              >
-                ยกเลิก
-              </button>
-              <button type="submit" className="btn-submit">
-                ยืนยันการชำระเงิน
-              </button>
-            </div>
-          </form>
-        </div>
+                    <th>น้ำ (หน่วย)</th>
+                    <th>ค่าน้ำ (บาท)</th>
+                    <th>ไฟ (หน่วย)</th>
+                    <th>ค่าไฟ (บาท)</th>
+                    <th>รวม (บาท)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {records.length === 0 ? (
+                    <tr><td colSpan={6} style={{textAlign:'center', padding:'30px', color:'#999'}}>ยังไม่มีประวัติการใช้งาน</td></tr>
+                ) : (
+                    records.map((rec) => (
+                        <tr key={rec._id}>
+                            <td>{rec.month}/{rec.year}</td>
+                            <td>{rec.waterUsage}</td>
+                            <td>฿{rec.waterCost.toLocaleString()}</td>
+                            <td>{rec.electricUsage}</td>
+                            <td>฿{rec.electricCost.toLocaleString()}</td>
+                            <td style={{fontWeight:'bold', color:'#333'}}>฿{rec.totalCost.toLocaleString()}</td>
+                        </tr>
+                    ))
+                )}
+            </tbody>
+        </table>
       </div>
     </div>
   );

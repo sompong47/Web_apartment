@@ -1,30 +1,30 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Tenant from "@/models/Tenant";
-import User from "@/models/User"; // จำเป็นต้อง import เพื่อให้ populate('userId') ทำงาน
-import Room from "@/models/Room"; // จำเป็นต้อง import เพื่อให้ populate('roomId') ทำงาน
+import User from "@/models/User"; // ✅ ต้อง import เพื่อกัน Error: MissingSchema
+import Room from "@/models/Room"; // ✅ ต้อง import เพื่อกัน Error: MissingSchema
+import bcrypt from "bcryptjs";
 
-// บังคับให้ทำงานแบบ Dynamic (ไม่ cache) เพื่อให้ได้ข้อมูลล่าสุดเสมอ
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // บังคับโหลดใหม่เสมอ
 
 export async function GET() {
   try {
-    // 1. เชื่อมต่อฐานข้อมูล
     await connectDB();
-    
-    // 2. ดึงข้อมูล
+
+    // 🔥 เทคนิค: เรียกใช้ตัวแปร Model เพื่อบังคับให้ Mongoose โหลด Schema
+    const _dependencies = [User, Room];
+
     const tenants = await Tenant.find()
-      .populate('userId') // ดึงข้อมูล User มาแปะ
-      .populate('roomId') // ดึงข้อมูล Room มาแปะ
+      .populate('userId') // ดึงข้อมูลจาก User
+      .populate('roomId') // ดึงข้อมูลจาก Room
       .sort({ createdAt: -1 });
-      
-    // 3. ส่งข้อมูลกลับ
-    return NextResponse.json(tenants, { status: 200 });
+
+    return NextResponse.json(tenants);
 
   } catch (error) {
-    console.error("Error fetching tenants:", error); // ดู Error ใน Terminal ได้
-    // ส่ง Array ว่างกลับไปแทน Error 500 หน้าเว็บจะได้ไม่พัง
-    return NextResponse.json([], { status: 500 }); 
+    console.error("❌ Error fetching tenants:", error);
+    // ส่ง Array ว่างกลับไป เพื่อกันหน้าเว็บขาว
+    return NextResponse.json([], { status: 500 });
   }
 }
 
@@ -32,17 +32,47 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     await connectDB();
-    
-    const newTenant = await Tenant.create(body);
-    
-    // อัพเดทสถานะห้องเป็น 'occupied'
-    if (body.roomId) {
-      await Room.findByIdAndUpdate(body.roomId, { status: 'occupied' });
+
+    const { 
+      name, email, phone, idCard, 
+      roomId, startDate, endDate, deposit, status, 
+      emergencyContact 
+    } = body;
+
+    // 1. สร้างหรือหา User
+    let user = await User.findOne({ email });
+    if (!user) {
+      const hashedPassword = await bcrypt.hash(phone || "123456", 10);
+      user = await User.create({
+        name,
+        email,
+        phone,
+        password: hashedPassword,
+        role: 'tenant'
+      });
+    }
+
+    // 2. สร้าง Tenant
+    const newTenant = await Tenant.create({
+      userId: user._id,
+      roomId,
+      startDate: new Date(startDate),
+      endDate: endDate ? new Date(endDate) : null,
+      deposit: Number(deposit),
+      status: status || 'active',
+      identityCard: idCard,
+      emergencyContact
+    });
+
+    // 3. อัปเดตห้องเป็น ไม่ว่าง
+    if (status === 'active') {
+        await Room.findByIdAndUpdate(roomId, { status: 'occupied' });
     }
     
     return NextResponse.json(newTenant, { status: 201 });
-  } catch (error) {
-    console.error("Error creating tenant:", error);
-    return NextResponse.json({ message: "Error creating tenant" }, { status: 500 });
+
+  } catch (error: any) {
+    console.error("❌ Error creating tenant:", error);
+    return NextResponse.json({ message: error.message || "Error" }, { status: 500 });
   }
 }

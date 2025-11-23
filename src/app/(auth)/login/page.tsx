@@ -42,17 +42,26 @@ export default function LoginPage() {
         throw new Error(data.message || "เข้าสู่ระบบไม่สำเร็จ");
       }
 
-      // บันทึก token (ถ้ามี)
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-      }
+      if (data.user) {
+        // 1. บันทึกข้อมูลคนล็อกอิน
+        localStorage.setItem("currentUser", JSON.stringify(data.user));
+        
+        if (rememberMe) {
+           localStorage.setItem("rememberedEmail", formData.email);
+        }
 
-      if (rememberMe) {
-        localStorage.setItem("rememberedEmail", formData.email);
+        // 2. 🔥 แยกทางตาม Role (สำคัญตรงนี้) 🔥
+        if (data.user.role === 'admin') {
+          // ถ้าเป็น Admin -> ไปหน้าแอดมิน
+          router.push("/dashboard/admin");
+        } else {
+          // ถ้าเป็นคนธรรมดา -> ไปหน้าผู้เช่า
+          router.push("/dashboard/tenant");
+        }
+        
+      } else {
+        throw new Error("ไม่พบข้อมูลผู้ใช้");
       }
-
-      alert("เข้าสู่ระบบสำเร็จ!");
-      router.push("/dashborad");
 
     } catch (err: any) {
       setError(err.message);
@@ -64,10 +73,9 @@ export default function LoginPage() {
   return (
     <div className="login-container">
       <div className="login-card">
-        
         <div className="login-header">
           <h1>เข้าสู่ระบบ</h1>
-          <p>ระบบจัดการหอพักออนไลน์</p>
+          <p>ระบบจัดการหอพักออนไลน์ SorHub</p>
         </div>
 
         {error && <div className="alert-error">{error}</div>}
@@ -103,7 +111,7 @@ export default function LoginPage() {
                 className="toggle-password"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? "👁️" : "👁️‍🗨️"}
+                {showPassword ? "👁️" : "🔒"}
               </button>
             </div>
           </div>
@@ -115,9 +123,9 @@ export default function LoginPage() {
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
               />
-              จำไว้ในเครื่องนี้
+              จำฉันไว้ในระบบ
             </label>
-            <Link href="/forgot-password">ลืมรหัสผ่าน?</Link>
+            <a href="#" onClick={(e) => e.preventDefault()} style={{color:'#666', fontSize:'14px'}}>ลืมรหัสผ่าน?</a>
           </div>
 
           <button type="submit" className="btn-submit" disabled={loading}>
@@ -125,20 +133,12 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="divider">
-          <span>หรือ</span>
-        </div>
+        <div className="divider"><span>หรือ</span></div>
 
         <div className="social-buttons">
-          <button type="button" className="social-btn" title="Google">
-            🔵
-          </button>
-          <button type="button" className="social-btn" title="Facebook">
-            👤
-          </button>
-          <button type="button" className="social-btn" title="Line">
-            💬
-          </button>
+          <button type="button" className="social-btn" title="Google">G</button>
+          <button type="button" className="social-btn" title="Facebook">f</button>
+          <button type="button" className="social-btn" title="Line">L</button>
         </div>
 
         <div className="signup-link">

@@ -524,3 +524,183 @@
     padding: 16px;
   }
 }
+
+
+/* ... (ส่วนบนเหมือนเดิม) ... */
+
+/* --- Dashboard Content Layout --- */
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* ซ้าย 2 ส่วน : ขวา 1 ส่วน */
+  gap: 20px;
+  align-items: start; /* จัดให้เริ่มจากบนสุด */
+}
+
+.dashboard-section {
+  background: white;
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  margin-bottom: 20px; /* เว้นระยะห่างระหว่างก้อน */
+}
+
+/* ส่วนซ้าย (Main Column) */
+.main-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ส่วนขวา (Side Column) */
+.side-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: sticky; /* ให้เมนูขวาลอยตามเวลาเลื่อน */
+  top: 20px;
+}
+
+/* --- CSS Bar Chart (กราฟแท่งแบบ CSS ล้วน) --- */
+.chart-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 200px;
+  padding-top: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.chart-bar-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.chart-bar {
+  width: 40px;
+  background: linear-gradient(to top, #007bff, #6610f2);
+  border-radius: 6px 6px 0 0;
+  transition: height 0.5s ease;
+  opacity: 0.8;
+  position: relative;
+}
+
+.chart-bar:hover {
+  opacity: 1;
+  transform: scaleY(1.05);
+  transform-origin: bottom;
+}
+
+/* Tooltip ค่าเงิน */
+.chart-bar::after {
+  content: attr(data-value);
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+  opacity: 0;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.chart-bar:hover::after { opacity: 1; }
+
+.chart-label {
+  font-size: 12px;
+  color: #666;
+}
+
+/* --- Activity List --- */
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.activity-item {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f9f9f9;
+}
+.activity-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+.activity-icon {
+  width: 40px;
+  height: 40px;
+  background: #f8f9fa;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.activity-info { flex: 1; }
+.activity-title { font-weight: 600; font-size: 14px; color: #333; }
+.activity-desc { font-size: 13px; color: #666; }
+.activity-time { font-size: 12px; color: #aaa; white-space: nowrap; }
+
+/* --- Quick Actions Grid --- */
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2 คอลัมน์ในมือถือ */
+  gap: 15px;
+}
+
+.action-card {
+  background: #f8f9fa;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 20px 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #555;
+  transition: all 0.2s;
+}
+.action-card:hover {
+  background: #fff;
+  border-color: #007bff;
+  color: #007bff;
+  box-shadow: 0 4px 15px rgba(0,123,255,0.1);
+  transform: translateY(-2px);
+}
+.action-icon { font-size: 28px; margin-bottom: 5px; }
+.action-text { font-size: 14px; font-weight: 600; }
+
+/* System Status Card */
+.system-status {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #555;
+}
+.status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ccc;
+}
+.status-on { background: #28a745; box-shadow: 0 0 5px #28a745; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .dashboard-layout {
+    grid-template-columns: 1fr; /* จอเล็กให้เรียงลงมา */
+  }
+  .side-column { position: static; } /* ยกเลิกการลอยในมือถือ */
+}
