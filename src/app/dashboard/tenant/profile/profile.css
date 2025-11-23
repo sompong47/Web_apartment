@@ -1,0 +1,189 @@
+/* src/app/dashboard/tenant/profile/profile.css */
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
+
+.profile-page {
+  padding: 30px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  font-family: 'Prompt', sans-serif;
+}
+
+.profile-header { margin-bottom: 30px; }
+.page-title { font-size: 24px; font-weight: 600; color: #333; }
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Profile Card (Header Info) */
+.profile-card {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.avatar-section { display: flex; align-items: center; gap: 20px; }
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+}
+
+.avatar-icon { width: 40px; height: 40px; }
+
+.profile-name { margin: 0; font-size: 22px; font-weight: 600; color: #333; }
+.profile-room { margin: 5px 0 10px; color: #666; font-size: 16px; }
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #d4edda;
+  color: #155724;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Tabs */
+.tabs { display: flex; gap: 10px; border-bottom: 1px solid #eee; padding-bottom: 1px; }
+.tab {
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-size: 15px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+.tab:hover { color: #007bff; }
+.tab-active { color: #007bff; border-bottom-color: #007bff; font-weight: 500; }
+
+/* Content Card */
+.tab-content {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 15px;
+}
+
+.card-title { font-size: 18px; margin: 0; color: #333; }
+
+/* Form */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+.label { font-size: 14px; color: #666; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+.label-icon { width: 16px; height: 16px; color: #007bff; }
+
+.input, .textarea {
+  padding: 10px 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #333;
+  background: #fff;
+  transition: border-color 0.2s;
+}
+
+.input:disabled, .textarea:disabled {
+  background: #f8f9fa;
+  color: #666;
+  cursor: not-allowed;
+  border-color: #f0f0f0;
+}
+
+.input:focus, .textarea:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.1);
+}
+
+.full-width { grid-column: 1 / -1; }
+
+/* Buttons */
+.edit-button, .save-button, .download-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.edit-button { background: #e7f5ff; color: #007bff; }
+.edit-button:hover { background: #d0ebff; }
+
+.save-button { background: #28a745; color: white; }
+.save-button:hover { background: #218838; }
+
+.cancel-button {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px; background: #f8f9fa; color: #666;
+  border: 1px solid #ddd; border-radius: 6px; cursor: pointer;
+}
+.cancel-button:hover { background: #e2e6ea; }
+
+.download-button { background: #6f42c1; color: white; }
+.download-button:hover { background: #5a32a3; }
+
+.action-buttons { display: flex; gap: 10px; }
+
+/* Contract Info */
+.contract-info { display: flex; flex-direction: column; gap: 30px; }
+.contract-section { background: #f8f9fa; padding: 20px; border-radius: 12px; }
+.section-title { font-size: 16px; margin: 0 0 15px; color: #007bff; border-bottom: 2px solid #e9ecef; padding-bottom: 8px; display: inline-block; }
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.info-item { display: flex; flex-direction: column; gap: 5px; }
+.info-label { font-size: 13px; color: #888; }
+.info-value { font-size: 15px; font-weight: 500; color: #333; }
+.info-value-highlight { font-size: 18px; font-weight: bold; color: #28a745; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .profile-card { flex-direction: column; text-align: center; }
+  .avatar-section { flex-direction: column; }
+}

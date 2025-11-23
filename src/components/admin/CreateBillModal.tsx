@@ -8,23 +8,27 @@ interface CreateBillModalProps {
 }
 
 export default function CreateBillModal({ onClose, onSuccess }: CreateBillModalProps) {
-  const [tenants, setTenants] = useState([]);
+  const [tenants, setTenants] = useState<any[]>([]); // แก้ไข: ใส่ type any[] เพื่อแก้ Error
   const [loading, setLoading] = useState(false);
   
   // Form Data
   const [formData, setFormData] = useState({
-    tenantId: "", // เราจะเก็บทั้ง tenantId และ roomId
-    month: new Date().getMonth() + 1 + "-" + new Date().getFullYear(), // Default: เดือน-ปี ปัจจุบัน
-    year: new Date().getFullYear()
+    tenantId: "", 
+    month: new Date().getMonth() + 1 + "-" + new Date().getFullYear(),
+    year: new Date().getFullYear(),
+    isSplit: false 
   });
 
   // 1. ดึงรายชื่อผู้เช่าทั้งหมด (ที่มีสถานะ active)
   useEffect(() => {
     const fetchTenants = async () => {
-      const res = await fetch("/api/tenants");
-      const data = await res.json();
-      // กรองเอาเฉพาะคนที่มีห้องอยู่ (Active)
-      setTenants(data.filter((t: any) => t.status === 'active'));
+      try {
+        const res = await fetch("/api/tenants");
+        if(res.ok) {
+            const data = await res.json();
+            if(Array.isArray(data)) setTenants(data.filter((t: any) => t.status === 'active'));
+        }
+      } catch (error) { console.error(error); }
     };
     fetchTenants();
   }, []);
@@ -36,7 +40,6 @@ export default function CreateBillModal({ onClose, onSuccess }: CreateBillModalP
 
     setLoading(true);
     
-    // หา roomId จาก tenantId ที่เลือก
     const selectedTenant: any = tenants.find((t: any) => t._id === formData.tenantId);
 
     try {
@@ -45,15 +48,16 @@ export default function CreateBillModal({ onClose, onSuccess }: CreateBillModalP
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           tenantId: formData.tenantId,
-          roomId: selectedTenant.roomId._id, // ดึง ID ห้องจาก Tenant
+          roomId: selectedTenant.roomId._id,
           month: formData.month,
-          year: Number(formData.year)
+          year: Number(formData.year),
+          isSplit: formData.isSplit 
         })
       });
 
       if (res.ok) {
         alert("สร้างบิลสำเร็จ!");
-        onSuccess(); // ปิด Modal และโหลดข้อมูลใหม่
+        onSuccess(); 
       } else {
         alert("เกิดข้อผิดพลาด (อาจยังไม่ได้จดมิเตอร์น้ำไฟ)");
       }
@@ -102,6 +106,18 @@ export default function CreateBillModal({ onClose, onSuccess }: CreateBillModalP
               placeholder="เช่น 11-2025"
               required
             />
+          </div>
+
+          <div style={{ marginBottom: '20px', padding: '10px', background: '#f8f9fa', borderRadius: '6px', border: '1px solid #eee' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '14px', color: '#333' }}>
+                <input 
+                    type="checkbox" 
+                    checked={formData.isSplit} 
+                    onChange={(e) => setFormData({...formData, isSplit: e.target.checked})} 
+                    style={{width: '16px', height: '16px'}}
+                />
+                <span>แยกบิลค่าเช่า กับ ค่าน้ำไฟ (สร้าง 2 ใบ)</span>
+            </label>
           </div>
 
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>

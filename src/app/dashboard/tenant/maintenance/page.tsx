@@ -1,59 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import "./maintenance.css";
 
+// Interface ให้ตรงกับข้อมูล API
 interface MaintenanceRequest {
-  id: string;
+  _id: string; 
   title: string;
   description: string;
   category: string;
   priority: "low" | "medium" | "high";
   status: "pending" | "in-progress" | "completed" | "rejected";
-  createdDate: string;
-  updatedDate: string;
+  createdAt: string;
+  updatedAt: string;
   assignedTo?: string;
+  // เพิ่ม tenantId เพื่อเช็คว่าเป็นของใคร
+  tenantId?: { 
+    userId?: { _id: string, name: string } | string 
+  }; 
 }
 
-const mockData: MaintenanceRequest[] = [
-  {
-    id: "MNT001",
-    title: "ซ่อมท่อน้ำแตก",
-    description: "ท่อน้ำหนึ่งแตกในห้องน้ำ ต้องซ่อมเร่งด่วน",
-    category: "เครื่องประปา",
-    priority: "high",
-    status: "in-progress",
-    createdDate: "2025-11-20",
-    updatedDate: "2025-11-21",
-    assignedTo: "สมชาย ช่างประปา",
-  },
-  {
-    id: "MNT002",
-    title: "เปลี่ยนหลอดไฟ",
-    description: "หลอดไฟในทางเดินหลักไม่สว่าง",
-    category: "ไฟฟ้า",
-    priority: "low",
-    status: "pending",
-    createdDate: "2025-11-21",
-    updatedDate: "2025-11-21",
-  },
-  {
-    id: "MNT003",
-    title: "ทำความสะอาดท่อระบายน้ำ",
-    description: "ท่อระบายน้ำอุดตันท้อนน้ำเสื่อม",
-    category: "ท่อระบายน้ำ",
-    priority: "medium",
-    status: "completed",
-    createdDate: "2025-11-15",
-    updatedDate: "2025-11-19",
-    assignedTo: "สมศรี ช่างท่อ",
-  },
-];
-
 export default function TenantMaintenancePage() {
-  const [requests, setRequests] = useState<MaintenanceRequest[]>(mockData);
+  const router = useRouter();
+  const [requests, setRequests] = useState<MaintenanceRequest[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [filterStatus, setFilterStatus] = useState("all");
+  
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -61,38 +35,87 @@ export default function TenantMaintenancePage() {
     priority: "medium",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // 1. ดึงข้อมูล + กรองเฉพาะของ User นี้
+  const fetchRequests = async () => {
+    try {
+      const userStr = localStorage.getItem("currentUser");
+      if (!userStr) {
+          router.push("/login");
+          return;
+      }
+      const currentUser = JSON.parse(userStr);
 
-    const newRequest: MaintenanceRequest = {
-      id: `MNT${String(requests.length + 1).padStart(3, "0")}`,
-      ...formData,
-      priority: formData.priority as "low" | "medium" | "high",
-      status: "pending",
-      createdDate: new Date().toISOString().split("T")[0],
-      updatedDate: new Date().toISOString().split("T")[0],
-    };
-
-    setRequests([newRequest, ...requests]);
-    setFormData({
-      title: "",
-      description: "",
-      category: "เครื่องประปา",
-      priority: "medium",
-    });
-    setShowModal(false);
-  };
-
-  const handleCancel = (id: string) => {
-    if (confirm("ยืนยันการยกเลิกการแจ้งซ่อมนี้?")) {
-      setRequests(
-        requests.map((req) =>
-          req.id === id ? { ...req, status: "rejected" as const } : req
-        )
-      );
+      const res = await fetch("/api/maintenance");
+      if (!res.ok) throw new Error("Failed to fetch");
+      const data = await res.json();
+      
+      if (Array.isArray(data)) {
+        // ✅ กรองเฉพาะรายการที่ tenantId.userId._id ตรงกับ currentUser.id
+        const myRequests = data.filter((req: any) => {
+            const reqUserId = req.tenantId?.userId?._id || req.tenantId?.userId;
+            return reqUserId === currentUser.id;
+        });
+        setRequests(myRequests);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchRequests();
+  }, []);
+
+  // 2. ส่งข้อมูลแจ้งซ่อม
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const payload = {
+       ...formData,
+       status: "pending"
+    };
+
+    try {
+        const res = await fetch("/api/maintenance", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            alert("แจ้งซ่อมสำเร็จ! เจ้าหน้าที่จะรีบดำเนินการ");
+            setShowModal(false);
+            setFormData({ title: "", description: "", category: "เครื่องประปา", priority: "medium" });
+            fetchRequests(); 
+        } else {
+            alert("เกิดข้อผิดพลาดในการส่งข้อมูล");
+        }
+    } catch (error) {
+        alert("เชื่อมต่อ Server ไม่ได้");
+    }
+  };
+
+  // 3. ยกเลิกการแจ้งซ่อม
+  const handleCancel = async (id: string) => {
+    if (!confirm("ยืนยันการยกเลิกการแจ้งซ่อมนี้?")) return;
+
+    try {
+        const res = await fetch(`/api/maintenance/${id}`, {
+            method: "DELETE"
+        });
+
+        if(res.ok) {
+            alert("ยกเลิกรายการเรียบร้อย");
+            fetchRequests();
+        }
+    } catch (error) {
+        alert("เกิดข้อผิดพลาด");
+    }
+  };
+
+  // Filter Logic (Tab)
   const filteredRequests =
     filterStatus === "all"
       ? requests
@@ -103,19 +126,19 @@ export default function TenantMaintenancePage() {
       pending: "รอการอนุมัติ",
       "in-progress": "กำลังดำเนินการ",
       completed: "เสร็จสิ้น",
-      rejected: "ปฏิเสธ",
+      rejected: "ปฏิเสธ/ยกเลิก",
     };
     return labels[status] || status;
   };
 
   const getPriorityLabel = (priority: string) => {
     const labels: Record<string, string> = {
-      low: "ต่ำ",
-      medium: "ปานกลาง",
-      high: "สูง",
+      low: "ต่ำ", medium: "ปานกลาง", high: "สูง",
     };
     return labels[priority] || priority;
   };
+
+  if (loading) return <div style={{padding:'50px', textAlign:'center'}}>กำลังโหลดข้อมูล...</div>;
 
   return (
     <div className="maintenance-container">
@@ -141,7 +164,7 @@ export default function TenantMaintenancePage() {
             <option value="pending">รอการอนุมัติ</option>
             <option value="in-progress">กำลังดำเนินการ</option>
             <option value="completed">เสร็จสิ้น</option>
-            <option value="rejected">ปฏิเสธ</option>
+            <option value="rejected">ยกเลิก</option>
           </select>
         </div>
       </div>
@@ -150,7 +173,7 @@ export default function TenantMaintenancePage() {
         {filteredRequests.length > 0 ? (
           filteredRequests.map((request) => (
             <div
-              key={request.id}
+              key={request._id}
               className={`maintenance-card ${request.status}`}
             >
               <div className="card-header">
@@ -164,10 +187,6 @@ export default function TenantMaintenancePage() {
 
               <div className="card-content">
                 <div className="content-row">
-                  <strong>เลขที่:</strong>
-                  <span>{request.id}</span>
-                </div>
-                <div className="content-row">
                   <strong>หมวดหมู่:</strong>
                   <span>{request.category}</span>
                 </div>
@@ -177,12 +196,12 @@ export default function TenantMaintenancePage() {
                 </div>
                 <div className="content-row">
                   <strong>วันที่แจ้ง:</strong>
-                  <span>{request.createdDate}</span>
+                  <span>{new Date(request.createdAt).toLocaleDateString('th-TH')}</span>
                 </div>
                 {request.assignedTo && (
                   <div className="content-row">
-                    <strong>มอบหมายให้:</strong>
-                    <span>{request.assignedTo}</span>
+                    <strong>ช่างผู้ดูแล:</strong>
+                    <span style={{color: '#007bff'}}>{request.assignedTo}</span>
                   </div>
                 )}
               </div>
@@ -191,12 +210,11 @@ export default function TenantMaintenancePage() {
                 {request.status === "pending" && (
                   <button
                     className="btn-small danger"
-                    onClick={() => handleCancel(request.id)}
+                    onClick={() => handleCancel(request._id)}
                   >
                     ❌ ยกเลิก
                   </button>
                 )}
-                <button className="btn-small">📄 ดูรายละเอียด</button>
               </div>
             </div>
           ))
@@ -209,6 +227,7 @@ export default function TenantMaintenancePage() {
         )}
       </div>
 
+      {/* Modal Form */}
       <div className={`modal ${showModal ? "active" : ""}`}>
         <div className="modal-content">
           <div className="modal-header">➕ แจ้งซ่อมใหม่</div>
@@ -250,7 +269,7 @@ export default function TenantMaintenancePage() {
                 <option>เครื่องประปา</option>
                 <option>ไฟฟ้า</option>
                 <option>ท่อระบายน้ำ</option>
-                <option>คอนโดมิเนียม</option>
+                <option>เฟอร์นิเจอร์</option>
                 <option>ประตูหน้าต่าง</option>
                 <option>อื่น ๆ</option>
               </select>
