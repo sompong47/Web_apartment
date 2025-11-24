@@ -6,7 +6,7 @@ import "./maintenance.css";
 
 // Interface ให้ตรงกับข้อมูล API
 interface MaintenanceRequest {
-  _id: string; 
+  _id: string; // MongoDB ใช้ _id
   title: string;
   description: string;
   category: string;
@@ -15,10 +15,7 @@ interface MaintenanceRequest {
   createdAt: string;
   updatedAt: string;
   assignedTo?: string;
-  // เพิ่ม tenantId เพื่อเช็คว่าเป็นของใคร
-  tenantId?: { 
-    userId?: { _id: string, name: string } | string 
-  }; 
+  tenantId?: { userId?: { _id: string } }; // เพิ่ม type เช็ค
 }
 
 export default function TenantMaintenancePage() {
@@ -27,6 +24,7 @@ export default function TenantMaintenancePage() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [filterStatus, setFilterStatus] = useState("all");
+  const [myTenantProfile, setMyTenantProfile] = useState<any>(null);
   
   const [formData, setFormData] = useState({
     title: "",
@@ -35,26 +33,49 @@ export default function TenantMaintenancePage() {
     priority: "medium",
   });
 
-  // 1. ดึงข้อมูล + กรองเฉพาะของ User นี้
-  const fetchRequests = async () => {
-    try {
-      const userStr = localStorage.getItem("currentUser");
-      if (!userStr) {
-          router.push("/login");
-          return;
-      }
-      const currentUser = JSON.parse(userStr);
+  // 1. โหลดข้อมูล User และ Tenant ของตัวเอง
+  useEffect(() => {
+    const initData = async () => {
+        try {
+            const userStr = localStorage.getItem("currentUser");
+            if (!userStr) { router.push("/login"); return; }
+            const currentUser = JSON.parse(userStr);
 
+            // หา Tenant ID ของเรา
+            const resTenants = await fetch("/api/tenants");
+            const tenants = await resTenants.json();
+            
+            if (Array.isArray(tenants)) {
+                // หา Tenant ที่เป็นของ User นี้
+                const myProfile = tenants.find((t: any) => 
+                    (t.userId?._id === currentUser.id || t.userId === currentUser.id) &&
+                    t.status === 'active'
+                );
+                setMyTenantProfile(myProfile);
+            }
+
+            // โหลดรายการแจ้งซ่อม
+            fetchRequests(currentUser.id);
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    initData();
+  }, []);
+
+  // 2. ฟังก์ชันโหลดรายการแจ้งซ่อม (รับ userId มากรอง)
+  const fetchRequests = async (currentUserId: string) => {
+    try {
       const res = await fetch("/api/maintenance");
-      if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
       
       if (Array.isArray(data)) {
-        // ✅ กรองเฉพาะรายการที่ tenantId.userId._id ตรงกับ currentUser.id
-        const myRequests = data.filter((req: any) => {
-            const reqUserId = req.tenantId?.userId?._id || req.tenantId?.userId;
-            return reqUserId === currentUser.id;
-        });
+        // กรองเฉพาะของ User นี้
+        const myRequests = data.filter((req: any) => 
+            req.tenantId?.userId?._id === currentUserId || req.tenantId?.userId === currentUserId
+        );
         setRequests(myRequests);
       }
     } catch (error) {
@@ -64,16 +85,20 @@ export default function TenantMaintenancePage() {
     }
   };
 
-  useEffect(() => {
-    fetchRequests();
-  }, []);
-
-  // 2. ส่งข้อมูลแจ้งซ่อม
+  // 3. ส่งข้อมูลแจ้งซ่อม (พร้อมระบุตัวตน)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!myTenantProfile) {
+        alert("ไม่พบข้อมูลห้องพักของคุณ (กรุณาติดต่อแอดมิน)");
+        return;
+    }
+    
+    // ✅ ส่ง tenantId และ roomId ไปด้วย!
     const payload = {
        ...formData,
+       tenantId: myTenantProfile._id,
+       roomId: myTenantProfile.roomId?._id || myTenantProfile.roomId,
        status: "pending"
     };
 
@@ -88,7 +113,11 @@ export default function TenantMaintenancePage() {
             alert("แจ้งซ่อมสำเร็จ! เจ้าหน้าที่จะรีบดำเนินการ");
             setShowModal(false);
             setFormData({ title: "", description: "", category: "เครื่องประปา", priority: "medium" });
-            fetchRequests(); 
+            
+            // รีโหลดข้อมูลใหม่
+            const userStr = localStorage.getItem("currentUser");
+            if(userStr) fetchRequests(JSON.parse(userStr).id);
+            
         } else {
             alert("เกิดข้อผิดพลาดในการส่งข้อมูล");
         }
@@ -97,30 +126,32 @@ export default function TenantMaintenancePage() {
     }
   };
 
-  // 3. ยกเลิกการแจ้งซ่อม
+  // 3. ยกเลิกการแจ้งซ่อม (DELETE หรือ PUT cancel)
   const handleCancel = async (id: string) => {
     if (!confirm("ยืนยันการยกเลิกการแจ้งซ่อมนี้?")) return;
 
     try {
         const res = await fetch(`/api/maintenance/${id}`, {
-            method: "DELETE"
+            method: "DELETE" // หรือ PUT status: 'rejected'
         });
 
         if(res.ok) {
             alert("ยกเลิกรายการเรียบร้อย");
-            fetchRequests();
+            const userStr = localStorage.getItem("currentUser");
+            if(userStr) fetchRequests(JSON.parse(userStr).id);
         }
     } catch (error) {
         alert("เกิดข้อผิดพลาด");
     }
   };
 
-  // Filter Logic (Tab)
+  // Filter Logic
   const filteredRequests =
     filterStatus === "all"
       ? requests
       : requests.filter((req) => req.status === filterStatus);
 
+  // Helper Functions
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
       pending: "รอการอนุมัติ",
@@ -215,6 +246,7 @@ export default function TenantMaintenancePage() {
                     ❌ ยกเลิก
                   </button>
                 )}
+                {/* <button className="btn-small">📄 ดูรายละเอียด</button> */}
               </div>
             </div>
           ))
