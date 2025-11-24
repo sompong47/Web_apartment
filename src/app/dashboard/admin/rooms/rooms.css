@@ -1,6 +1,6 @@
 .rooms-container {
   padding: 20px;
-  background-color: #f8f9fa;
+  background: linear-gradient(to bottom right, #0f172a, #0a3b57, #0f172a);
   min-height: 100vh;
   font-family: 'Prompt', sans-serif;
 }
@@ -12,7 +12,7 @@
   margin-bottom: 30px;
 }
 
-.page-title { font-size: 24px; color: #333; margin: 0; }
+.page-title { font-size: 24px; color: #ffffff; margin: 0; }
 
 .btn-add {
   background-color: #007bff;

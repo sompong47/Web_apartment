@@ -3,7 +3,7 @@
 
 .utilities-container {
   padding: 30px;
-  background-color: #f8f9fa;
+  background: linear-gradient(to bottom right, #1e293b, #0f172a, #1e3a52);
   min-height: 100vh;
   font-family: 'Prompt', sans-serif;
 }
@@ -11,7 +11,7 @@
 .page-title {
   font-size: 24px;
   font-weight: 600;
-  color: #333;
+  color: #ffffff;
   margin: 0 0 10px 0;
 }
 

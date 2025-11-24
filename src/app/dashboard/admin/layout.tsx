@@ -76,7 +76,7 @@ export default function AdminLayout({
                 transition: 'opacity 0.2s',
                 display: isCollapsed ? 'none' : 'block' 
             }}>
-                <div style={{ fontSize: '20px', fontWeight: '700', letterSpacing: '0.5px' }}>SorHub</div>
+                <div style={{ fontSize: '20px', fontWeight: '700', letterSpacing: '0.5px' }}>SSS-Apartment</div>
                 <div style={{ fontSize: '11px', opacity: 0.6, textTransform: 'uppercase', letterSpacing: '1px' }}>Admin Panel</div>
             </div>
         </div>
@@ -182,11 +182,11 @@ export default function AdminLayout({
       <main style={{ 
           flex: 1, 
           padding: '30px', 
-          backgroundColor: '#f1f5f9', // Slate-100
-          marginLeft: sidebarWidth, // ขยับตามความกว้าง Sidebar
+          background: 'linear-gradient(to bottom right, #0f172a, #0a3b57, #0f172a)',
+          marginLeft: sidebarWidth,
           width: `calc(100% - ${sidebarWidth})`,
           minHeight: '100vh',
-          transition: 'margin-left 0.3s ease-in-out, width 0.3s ease-in-out' // ✨ Animation ฝั่งเนื้อหา
+          transition: 'margin-left 0.3s ease-in-out, width 0.3s ease-in-out'
       }}>
         {children}
       </main>
