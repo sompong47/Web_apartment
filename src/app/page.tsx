@@ -45,7 +45,7 @@ export default function SorHomepage() {
           <div className={styles.navContent}>
             <div className={styles.logo}>
               <Building2 className={styles.logoIcon} />
-              <span className={styles.logoText}>SorHub</span>
+              <span className={styles.logoText}>SSS-Apartment</span>
             </div>
 
             {/* Desktop Navigation */}
@@ -128,7 +128,7 @@ export default function SorHomepage() {
                 </div>
                 <div>
                   <div className={styles.contactLabel}>ที่อยู่</div>
-                  <div className={styles.contactValue}>123 ถนนสุขุมวิท กรุงเทพฯ</div>
+                  <div className={styles.contactValue}>123 ถนนหน้ามหาลัย ศรีสะเกษ</div>
                 </div>
               </div>
 
@@ -148,7 +148,7 @@ export default function SorHomepage() {
                 </div>
                 <div>
                   <div className={styles.contactLabel}>อีเมล</div>
-                  <div className={styles.contactValue}>contact@sorhub.com</div>
+                  <div className={styles.contactValue}>contact@sss.apartment.com</div>
                 </div>
               </div>
             </div>

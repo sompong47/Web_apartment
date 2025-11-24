@@ -68,7 +68,7 @@ export default function RegisterPage() {
         
         <div className="register-header">
           <h1>สมัครสมาชิก</h1>
-          <p>ระบบจัดการหอพักออนไลน์</p>
+          <p>ระบบจัดการหอพัก</p>
         </div>
 
         {error && <div className="alert-error">{error}</div>}
