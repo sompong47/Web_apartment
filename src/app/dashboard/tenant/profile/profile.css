@@ -3,7 +3,7 @@
 
 .profile-page {
   padding: 30px;
-  background-color: #f8f9fa;
+  background: linear-gradient(to bottom right, #1e293b, #0f172a, #1e3a52);
   min-height: 100vh;
   font-family: 'Prompt', sans-serif;
 }

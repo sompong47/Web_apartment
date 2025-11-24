@@ -16,14 +16,14 @@
 .payment-container {
   font-family: 'Prompt', sans-serif;
   padding: 30px;
-  background-color: var(--light-bg);
+  background: linear-gradient(to bottom right, #0f172a, #0a3b57, #0f172a);
   min-height: 100vh;
 }
 
 .page-title {
   font-size: 28px;
   font-weight: 600;
-  color: #333;
+  color: #ffffff;
   margin-bottom: 25px;
   text-align: center;
 }

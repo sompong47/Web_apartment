@@ -6,7 +6,7 @@
 
 .dashboard-container {
   padding: 32px 24px;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: linear-gradient(to bottom right, #0f172a, #0a3b57, #0f172a);
   min-height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -19,7 +19,7 @@
 .dashboard-header h1 {
   font-size: 40px;
   font-weight: 800;
-  color: #1a1a1a;
+  color: #ffffff;
   margin-bottom: 8px;
 }
 
