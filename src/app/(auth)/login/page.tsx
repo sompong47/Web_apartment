@@ -21,6 +21,7 @@ export default function LoginPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // --- ฟังก์ชัน Login ปกติ ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -43,22 +44,17 @@ export default function LoginPage() {
       }
 
       if (data.user) {
-        // 1. บันทึกข้อมูลคนล็อกอิน
         localStorage.setItem("currentUser", JSON.stringify(data.user));
         
         if (rememberMe) {
            localStorage.setItem("rememberedEmail", formData.email);
         }
 
-        // 2. 🔥 แยกทางตาม Role (สำคัญตรงนี้) 🔥
         if (data.user.role === 'admin') {
-          // ถ้าเป็น Admin -> ไปหน้าแอดมิน
           router.push("/dashboard/admin");
         } else {
-          // ถ้าเป็นคนธรรมดา -> ไปหน้าผู้เช่า
           router.push("/dashboard/tenant");
         }
-        
       } else {
         throw new Error("ไม่พบข้อมูลผู้ใช้");
       }
@@ -70,9 +66,32 @@ export default function LoginPage() {
     }
   };
 
+  // --- 🔥 ฟังก์ชันทางลัดสำหรับทีม Dev (Bypass Login) ---
+  const handleDevLogin = (role: 'admin' | 'tenant') => {
+    // สร้างข้อมูลปลอมๆ ขึ้นมาเพื่อให้ผ่านการตรวจสอบหน้าเว็บ
+    const mockUser = {
+        id: "dev-id-" + role, // ไอดีปลอม
+        name: role === 'admin' ? "Admin Developer" : "Tenant Developer",
+        email: `${role}@dev.com`,
+        role: role,
+        phone: "000-000-0000"
+    };
+
+    // ยัดลงเครื่องเลย ไม่ต้องถาม API
+    localStorage.setItem("currentUser", JSON.stringify(mockUser));
+
+    // ดีดไปหน้า Dashboard ตามบทบาท
+    if (role === 'admin') {
+        router.push("/dashboard/admin");
+    } else {
+        router.push("/dashboard/tenant");
+    }
+  };
+
   return (
     <div className="login-container">
       <div className="login-card">
+        
         <div className="login-header">
           <h1>เข้าสู่ระบบ</h1>
           <p>ระบบจัดการหอพักออนไลน์ SorHub</p>
@@ -133,7 +152,9 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="divider"><span>หรือ</span></div>
+        <div className="divider">
+          <span>หรือ</span>
+        </div>
 
         <div className="social-buttons">
           <button type="button" className="social-btn" title="Google">G</button>
@@ -144,6 +165,26 @@ export default function LoginPage() {
         <div className="signup-link">
           ยังไม่มีบัญชี? <Link href="/register">สมัครสมาชิก</Link>
         </div>
+
+        {/* --- 🔥 DEV ZONE: ปุ่มทางลัดสำหรับเพื่อนร่วมทีม --- */}
+        <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px dashed #eee', textAlign: 'center'}}>
+            <p style={{fontSize: '12px', color: '#999', marginBottom: '10px'}}>🛠️ สำหรับ Developer (ไม่ต้องกรอกรหัส)</p>
+            <div style={{display: 'flex', gap: '10px', justifyContent: 'center'}}>
+                <button 
+                    onClick={() => handleDevLogin('admin')}
+                    style={{padding: '8px 15px', background: '#333', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '12px'}}
+                >
+                    เข้าเป็น Admin
+                </button>
+                <button 
+                    onClick={() => handleDevLogin('tenant')}
+                    style={{padding: '8px 15px', background: '#666', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '12px'}}
+                >
+                    เข้าเป็น ผู้เช่า
+                </button>
+            </div>
+        </div>
+
       </div>
     </div>
   );
