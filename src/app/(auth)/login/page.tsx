@@ -75,7 +75,7 @@ export default function LoginPage() {
       <div className="login-card">
         <div className="login-header">
           <h1>เข้าสู่ระบบ</h1>
-          <p>ระบบจัดการหอพักออนไลน์ SorHub</p>
+          <p>ระบบจัดการหอพักออนไลน์ SSS-Apartment</p>
         </div>
 
         {error && <div className="alert-error">{error}</div>}

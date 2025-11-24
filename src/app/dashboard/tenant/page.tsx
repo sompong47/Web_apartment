@@ -87,7 +87,7 @@ export default function TenantDashboard() {
         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
             <div>
                 <h1>สวัสดี, {user?.name || "ผู้เช่า"} 👋</h1>
-                <p>ยินดีต้อนรับสู่ระบบจัดการหอพัก SorHub</p>
+                <p>ยินดีต้อนรับสู่ระบบจัดการหอพัก SSS-Apartment</p>
             </div>
             
         </div>

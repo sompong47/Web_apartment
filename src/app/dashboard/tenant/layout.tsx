@@ -54,7 +54,7 @@ export default function TenantLayout({
           <div className="tenant-nav-content">
             <div className="tenant-logo">
               <Building2 className="tenant-logo-icon" />
-              <span className="tenant-logo-text">SorHub</span>
+              <span className="tenant-logo-text">SSS-Apartment</span>
             </div>
 
             {/* Desktop Navigation */}
