@@ -1,0 +1,143 @@
+/* src/app/dashboard/admin/utilities/utilities.css */
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
+
+.utilities-container {
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 16px; /* เพิ่มความโค้ง */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  font-family: 'Prompt', sans-serif;
+  /* ลบ margin ออกเพื่อให้เต็มหน้าจอ Dashboard */
+}
+
+.page-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 30px; 
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 20px;
+}
+
+.page-title { 
+  font-size: 24px; 
+  font-weight: 700; 
+  color: #333;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ตาราง */
+.utility-table { 
+  width: 100%; 
+  border-collapse: separate; 
+  border-spacing: 0;
+  margin-top: 10px; 
+}
+
+.utility-table th { 
+  background-color: #f8f9fa; 
+  padding: 16px; 
+  text-align: left; 
+  color: #666; 
+  font-weight: 600;
+  font-size: 14px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+/* ทำให้หัวตารางโค้งมน */
+.utility-table th:first-child { border-top-left-radius: 8px; }
+.utility-table th:last-child { border-top-right-radius: 8px; }
+
+.utility-table td { 
+  padding: 16px; 
+  border-bottom: 1px solid #f0f0f0; 
+  vertical-align: top; /* จัดชิดบนเพื่อให้ Input กับข้อความตรงกัน */
+}
+
+.utility-table tr:hover {
+  background-color: #fcfcfc;
+}
+
+/* Input ช่องกรอกตัวเลข */
+.meter-input {
+  width: 100%;
+  max-width: 120px;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  text-align: right;
+  font-size: 15px;
+  font-family: 'Prompt', sans-serif;
+  transition: all 0.2s ease;
+  color: #333;
+}
+
+.meter-input:focus { 
+  border-color: #007bff; 
+  outline: none; 
+  box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+}
+
+/* ช่องที่ disable (เลขเก่า) - ทำให้อ่านง่ายแต่รู้ว่าแก้ไขไม่ได้ */
+.meter-input:disabled, 
+.meter-input[readonly],
+.meter-input[style*="background: #eee"] {
+  background-color: #f1f5f9 !important;
+  color: #64748b;
+  border-color: transparent;
+  cursor: default;
+  font-weight: 500;
+}
+
+/* ตัวเลขส่วนต่าง (+หน่วย) */
+.unit-diff { 
+  font-weight: 600; 
+  color: #22c55e; /* สีเขียวสดใส */
+  font-size: 12px;
+  margin-top: 6px;
+  text-align: right;
+  display: block;
+}
+
+.cost-preview { 
+  font-size: 12px; 
+  color: #94a3b8; 
+  margin-top: 4px;
+  display: block;
+}
+
+/* ปุ่มบันทึก */
+.btn-save {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 10px rgba(0,123,255,0.2);
+}
+
+.btn-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,123,255,0.3);
+}
+
+.btn-save:active {
+  transform: translateY(0);
+}
+
+.btn-save:disabled { 
+  background: #ccc; 
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}

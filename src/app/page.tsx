@@ -1,66 +1,171 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+// app/page.tsx
+'use client';
 
-export default function Home() {
+import { useState } from 'react';
+import Link from 'next/link';
+import {
+  Home,
+  LogIn,
+  UserPlus,
+  Users,
+  DoorOpen,
+  CreditCard,
+  Wrench,
+  FileText,
+  Menu,
+  X,
+  Building2,
+  MapPin,
+  Phone,
+  Mail,
+  User
+} from 'lucide-react';
+import styles from './page.module.css';
+
+export default function SorHomepage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navigationItems = [
+    { icon: LogIn, label: 'เข้าสู่ระบบ', href: '/login' },
+    { icon: UserPlus, label: 'สมัครสมาชิก', href: '/register' },
+  ];
+
+  const stats = [
+    { label: 'ห้องพักทั้งหมด', value: '120', sublabel: 'ห้อง' },
+    { label: 'ห้องว่าง', value: '15', sublabel: 'ห้อง' },
+    { label: 'ผู้เช่าปัจจุบัน', value: '105', sublabel: 'คน' },
+    { label: 'อัตราการเข้าพัก', value: '87.5', sublabel: '%' },
+  ];
+
   return (
     <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
+      {/* Navigation */}
+      <nav className={styles.navbar}>
+        <div className={styles.navContainer}>
+          <div className={styles.navContent}>
+            <div className={styles.logo}>
+              <Building2 className={styles.logoIcon} />
+              <span className={styles.logoText}>SSS-Apartment</span>
+            </div>
+
+            {/* Desktop Navigation */}
+            <div className={styles.desktopNav}>
+              {navigationItems.map((item, i) => (
+                <a key={i} href={item.href} className={styles.navLink}>
+                  <item.icon className={styles.navIcon} />
+                  <span>{item.label}</span>
+                </a>
+              ))}
+              <a href="/login">
+                <button className={styles.ctaButton}>เริ่มต้นใช้งาน</button>
+              </a>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className={styles.mobileMenuButton}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              {mobileMenuOpen ? <X className={styles.menuIcon} /> : <Menu className={styles.menuIcon} />}
+            </button>
+          </div>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className={styles.mobileMenu}>
+            <div className={styles.mobileMenuContent}>
+              {navigationItems.map((item, i) => (
+                <a key={i} href={item.href} className={styles.mobileNavLink}>
+                  <item.icon className={styles.mobileNavIcon} />
+                  <span>{item.label}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </nav>
+
+      {/* Hero Section */}
+      <section className={styles.hero}>
+        <div className={styles.container}>
+          <div className={styles.heroContent}>
+            <h1 className={styles.heroTitle}>
+              ระบบจัดการ
+              <span className={styles.heroTitleGradient}> หอพัก </span>
+              ที่ทันสมัย
+            </h1>
+            <p className={styles.heroDescription}>
+              จัดการหอพักของคุณได้อย่างมีประสิทธิภาพ ใช้งานง่าย
+            </p>
+            <div className={styles.heroCta}>
+              <a href="/login">
+                <button className={styles.primaryButton}>เริ่มต้นใช้งาน</button>
+              </a>
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className={styles.statsGrid}>
+            {stats.map((stat, i) => (
+              <div key={i} className={styles.statCard}>
+                <div className={styles.statValue}>{stat.value}</div>
+                <div className={styles.statSublabel}>{stat.sublabel}</div>
+                <div className={styles.statLabel}>{stat.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* ❌ Features Section ถูกลบแล้ว ❌ */}
+
+          {/* Contact Info */}
+          <div className={styles.contactSection}>
+            <h2 className={styles.contactTitle}>ข้อมูลติดต่อ</h2>
+            <div className={styles.contactGrid}>
+              <div className={styles.contactItem}>
+                <div className={`${styles.contactIconWrapper} ${styles.purpleIcon}`}>
+                  <MapPin className={styles.contactIcon} />
+                </div>
+                <div>
+                  <div className={styles.contactLabel}>ที่อยู่</div>
+                  <div className={styles.contactValue}>123 ถนนหน้ามหาลัย ศรีสะเกษ</div>
+                </div>
+              </div>
+
+              <div className={styles.contactItem}>
+                <div className={`${styles.contactIconWrapper} ${styles.pinkIcon}`}>
+                  <Phone className={styles.contactIcon} />
+                </div>
+                <div>
+                  <div className={styles.contactLabel}>โทรศัพท์</div>
+                  <div className={styles.contactValue}>02-123-4567</div>
+                </div>
+              </div>
+
+              <div className={styles.contactItem}>
+                <div className={`${styles.contactIconWrapper} ${styles.purpleIcon}`}>
+                  <Mail className={styles.contactIcon} />
+                </div>
+                <div>
+                  <div className={styles.contactLabel}>อีเมล</div>
+                  <div className={styles.contactValue}>contact@sss.apartment.com</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
-      </main>
+      </section>
+
+      {/* Footer */}
+      <footer className={styles.footer}>
+        <div className={styles.container}>
+          <div className={styles.footerContent}>
+    
+          </div>
+        </div>
+      </footer>
+
     </div>
   );
 }
