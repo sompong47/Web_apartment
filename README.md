@@ -1,36 +1,128 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Web Apartment
 
-## Getting Started
+ระบบจัดการห้องพักและอพาร์ทเมนต์ออนไลน์ที่พัฒนาด้วย Next.js
 
-First, run the development server:
+## 📋 เกี่ยวกับโปรเจกต์
+
+Web Apartment เป็นเว็บแอปพลิเคชันสำหรับจัดการและค้นหาห้องพัก/อพาร์ทเมนต์ ที่พัฒนาด้วย Next.js framework พร้อมฟีเจอร์ที่ทันสมัยและใช้งานง่าย
+
+## ✨ คุณสมบัติหลัก
+
+- 🏠 แสดงรายการห้องพัก/อพาร์ทเมนต์
+- 🔍 ระบบค้นหาและกรองข้อมูล
+- 📱 รองรับการใช้งานบนทุกอุปกรณ์ (Responsive Design)
+- ⚡ ประสิทธิภาพสูงด้วย Next.js
+- 🎨 UI/UX ที่สวยงามและใช้งานง่าย
+
+## 🚀 เทคโนโลยีที่ใช้
+
+- [Next.js](https://nextjs.org) - React Framework
+- [React](https://reactjs.org) - UI Library
+- [TypeScript](https://www.typescriptlang.org) - Programming Language
+- [Geist Font](https://vercel.com/font) - Typography
+
+## 📦 การติดตั้ง
+
+### ความต้องการของระบบ
+
+- Node.js 18.0 หรือสูงกว่า
+- npm, yarn, pnpm หรือ bun
+
+### ขั้นตอนการติดตั้ง
+
+1. Clone repository
+
+```bash
+git clone https://github.com/sompong47/Web_apartment.git
+cd Web_apartment
+```
+
+2. ติดตั้ง dependencies
+
+```bash
+npm install
+# หรือ
+yarn install
+# หรือ
+pnpm install
+# หรือ
+bun install
+```
+
+3. รันโปรเจกต์ในโหมด development
 
 ```bash
 npm run dev
-# or
+# หรือ
 yarn dev
-# or
+# หรือ
 pnpm dev
-# or
+# หรือ
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. เปิดเบราว์เซอร์และไปที่ [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 โครงสร้างโปรเจกต์
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+Web_apartment/
+├── app/                # App directory (Next.js 13+)
+│   └── page.tsx       # หน้าหลัก
+├── public/            # Static files
+├── node_modules/      # Dependencies
+├── package.json       # Package configuration
+├── tsconfig.json      # TypeScript configuration
+└── next.config.js     # Next.js configuration
+```
 
-## Learn More
+## 🛠️ การพัฒนา
 
-To learn more about Next.js, take a look at the following resources:
+### แก้ไขหน้าเพจ
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+เริ่มแก้ไขหน้าเพจได้ที่ `app/page.tsx` ระบบจะอัปเดตหน้าเว็บอัตโนมัติเมื่อคุณบันทึกไฟล์
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### เพิ่มฟอนต์
 
-## Deploy on Vercel
+โปรเจกต์นี้ใช้ [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) เพื่อโหลดและปรับแต่ง Geist font อัตโนมัติ
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📚 เอกสารเพิ่มเติม
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Next.js Documentation](https://nextjs.org/docs) - เรียนรู้เกี่ยวกับฟีเจอร์และ API ของ Next.js
+- [Learn Next.js](https://nextjs.org/learn) - บทเรียน Next.js แบบ Interactive
+- [Next.js GitHub](https://github.com/vercel/next.js) - ร่วมพัฒนาและให้ Feedback
+
+## 🚀 Deploy
+
+วิธีที่ง่ายที่สุดในการ deploy แอป Next.js คือการใช้ [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)
+
+ดูรายละเอียดเพิ่มเติมได้ที่ [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying)
+
+## 👤 ผู้พัฒนา
+
+- **sompong47** - [GitHub Profile](https://github.com/sompong47)
+
+## 📄 License
+
+โปรเจกต์นี้เปิดให้ใช้งานอย่างเสรี
+
+## 🤝 การมีส่วนร่วม
+
+หากคุณต้องการมีส่วนร่วมในการพัฒนาโปรเจกต์นี้:
+
+1. Fork โปรเจกต์
+2. สร้าง Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit การเปลี่ยนแปลง (`git commit -m 'Add some AmazingFeature'`)
+4. Push ไปยัง Branch (`git push origin feature/AmazingFeature`)
+5. เปิด Pull Request
+
+## 📞 ติดต่อ
+
+หากมีคำถามหรือข้อเสนอแนะ สามารถติดต่อได้ที่:
+
+- GitHub: [@sompong47](https://github.com/sompong47)
+- Repository: [Web_apartment](https://github.com/sompong47/Web_apartment)
+
+---
+
+⭐ ถ้าคุณชอบโปรเจกต์นี้ อย่าลืมกด Star ให้ด้วยนะครับ!
